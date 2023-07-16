@@ -5,6 +5,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+from sklearn.preprocessing import PolynomialFeatures
 
 data = pd.read_csv('diabetes.csv')
 mae_knn = []
@@ -58,10 +59,16 @@ for i in range(30):
     mae_knn.append(mean_absolute_error(y_test, y_pred))
 
     #TODO: precisa verificar qual parâmetro será ajustado para validar on conjunto de validação
+    
+    # Criando uma instância de polynomail_features
+    polynomial_features = PolynomialFeatures(degree=2)
+    x_poly_train = polynomial_features.fit_transform(x_train)
+    x_poly_test = polynomial_features.fit_transform(x_test)
+    
     # Aplicando Regressão Linear no conjunto de teste
     linear_regression = LinearRegression()
-    linear_regression.fit(x_train, y_train) # Treinar o regressor de regressão linear
-    y_pred = linear_regression.predict(x_test) # Fazer previsões nos dados de teste
+    linear_regression.fit(x_poly_train, y_train) # Treinar o regressor de regressão linear
+    y_pred = linear_regression.predict(x_poly_test) # Fazer previsões nos dados de teste
     mae_linear_regression.append(mean_absolute_error(y_test, y_pred))  # Adicionar o MAE à lista
 
 # Cálculo da média (estimativa pontual) e o desvio padrão do MAE
